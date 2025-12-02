@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沖繩五日可愛手繪地圖行程 App</title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-bg: #FFFDF0; /* 米黃色背景紙張感 */
+            --primary-color: #FF8BA7; /* 可愛粉紅 */
+            --secondary-color: #FFC857; /* 溫暖黃 */
+            --accent-blue: #9AD1D4; /* 清新藍 */
+            --text-color: #55423D; /* 深咖啡色文字 */
+        }
+
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background-color: var(--main-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            background-image: radial-gradient(#FFEDF2 20%, transparent 20%), radial-gradient(#F0FFF0 20%, transparent 20%);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(85, 66, 61, 0.1);
+            overflow: hidden;
+            border: 3px dashed var(--primary-color);
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* 地圖展示區塊 */
+        .map-display-area {
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            background-color: #E6F7FF;
+            border-bottom: 3px dashed var(--accent-blue);
+        }
+
+        .map-display-area img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 5px solid white;
+        }
+
+        /* 行程列表區塊 */
+        .itinerary-list {
+            padding: 20px;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 2px solid var(--secondary-color);
+        }
+
+        .day-header {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            padding: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .day-header::before {
+            content: '📅';
+            margin-right: 10px;
+        }
+
+        .day-content {
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* 互動按鈕樣式 */
+        .location-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .location-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* 不同類型的按鈕顏色 */
+        .btn-spot { background-color: #E0F7FA; color: #006064; border: 2px solid var(--accent-blue);}
+        .btn-food { background-color: #FFF3E0; color: #E65100; border: 2px solid #FFB74D;}
+        .btn-hotel { background-color: #F3E5F5; color: #4A148C; border: 2px solid #CE93D8;}
+        .btn-transport { background-color: #E8F5E9; color: #1B5E20; border: 2px solid #81C784;}
+
+        .location-icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        ✈️ 沖繩五日地圖行程 🌺
+    </header>
+
+    <div class="map-display-area">
+        <img src="https://meee.com.tw/B2B8cG4.png" alt="沖繩手繪行程地圖">
+        <p style="margin-top: 10px; font-size: 0.9em; color: #666;">👆 點擊下方按鈕可直接導航喔！👇</p>
+    </div>
+
+    <div class="itinerary-list" id="itinerary-container">
+        </div>
+
+    <footer>
+        Made with ❤️ for your Okinawa Trip!
+    </footer>
+</div>
+
+<script>
+    // 定義行程資料 (包含 Google Maps 搜尋連結)
+    // 這裡使用 Google Maps 的通用搜尋 URL，點擊後會自動開啟地圖 App 並搜尋該地點
+    const itineraryData = [
+        {
+            day: "Day 1: 抵達那霸與拉麵之夜",
+            items: [
+                { name: "那霸機場 (抵達/租車)", type: "transport", icon: "🚗", query: "Naha Airport" },
+                { name: "WBF ART STAY那霸飯店 (入住)", type: "hotel", icon: "🏨", query: "Hotel WBF Art Stay Naha Kokusai-dori" },
+                { name: "琉家拉麵", type: "food", icon: "🍜", query: "Ryukyu Ramen Tomila" },
+                { name: "暖慕拉麵", type: "food", icon: "🍜", query: "Ramen Danbo Naha Makishi" }
+            ]
+        },
+        {
+            day: "Day 2: 中部購物與美式風情",
+            items: [
+                { name: "SAN-A浦添西海岸 PARCO CITY", type: "spot", icon: "🛍️", query: "サンエー 浦添西海岸パルコシティ" },
+                { name: "美國村 (American Village)", type: "spot", icon: "🎡", query: "American Village Okinawa" }
+            ]
+        },
+        {
+            day: "Day 3: 海岸兜風與寶可夢",
+            items: [
+                { name: "浜屋沖繩麵 (早午餐)", type: "food", icon: "🍜", query: "Hamaya Soba" },
+                { name: "萬座毛 (象鼻岩)", type: "spot", icon: "🐘", query: "Manzamo" },
+                { name: "殘波岬燈塔", type: "spot", icon: "🗼", query: "Cape Zanpa Lighthouse" },
+                { name: "道之驛 嘉手納 (看飛機)", type: "spot", icon: "✈️", query: "Michi-no-Eki Kadena" },
+                { name: "沖繩AEON寶可夢中心", type: "spot", icon: "⚡", query: "Pokémon Center Okinawa AEON MALL Okinawa Rycom" }
+            ]
+        },
+        {
+            day: "Day 4: 北部跳島與水族館",
+            items: [
+                { name: "古宇利島", type: "spot", icon: "🏝️", query: "Kouri Island" },
+                { name: "蝦蝦飯 (Shrimp Wagon)", type: "food", icon: "🍤", query: "Kouri Shrimp Wagon" },
+                { name: "美麗海水族館", type: "spot", icon: "🐋", query: "Okinawa Churaumi Aquarium" },
+                { name: "THE GOLDEN STORE (法式薄餅)", type: "food", icon: "🥞", query: "THE GOLDEN STORE" }
+            ]
+        },
+        {
+            day: "Day 5: 南部美食與歸途",
+            items: [
+                { name: "奧武島 (吃天婦羅)", type: "food", icon: "🦑", query: "Ou Island Tempura" },
+                { name: "瀨長島 (看飛機/吃鬆餅)", type: "spot", icon: "🥞", query: "Senaga Island Umikaji Terrace" },
+                { name: "幸福鬆餅 (A Happy Pancake)", type: "food", icon: "🥞", query: "A Happy Pancake Umikaji Terrace" },
+                { name: "沖繩 ASHIBINAA Outlet", type: "spot", icon: "🛍️", query: "Ashibinaa Outlet Mall" },
+                { name: "那霸機場 (還車/搭機)", type: "transport", icon: "✈️", query: "Naha Airport" }
+            ]
+        }
+    ];
+
+    const container = document.getElementById('itinerary-container');
+
+    // 動態產生 HTML 內容
+    itineraryData.forEach(dayData => {
+        const dayCard = document.createElement('div');
+        dayCard.className = 'day-card';
+
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'day-header';
+        dayHeader.textContent = dayData.day;
+
+        const dayContent = document.createElement('div');
+        dayContent.className = 'day-content';
+
+        dayData.items.forEach(item => {
+            // 建立連結按鈕，點擊後開啟 Google Maps 搜尋
+            const btn = document.createElement('a');
+            btn.className = `location-btn btn-${item.type}`;
+            btn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.query + " Okinawa")}`;
+            btn.target = "_blank"; // 在新分頁開啟
+            btn.innerHTML = `<span class="location-icon">${item.icon}</span>${item.name}`;
+            
+            dayContent.appendChild(btn);
+        });
+
+        dayCard.appendChild(dayHeader);
+        dayCard.appendChild(dayContent);
+        container.appendChild(dayCard);
+    });
+</script>
+
+</body>
+</html>
