@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>沖繩五日可愛手繪地圖行程 App</title>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght=400;700&display=swap" rel="stylesheet">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
+    
     <style>
         :root {
             --main-bg: #FFFDF0; /* 米黃色背景紙張感 */
@@ -56,11 +59,13 @@
         }
 
         .map-display-area img {
-            max-width: 100%;
+            /* 【修正】將 max-width 改成 width: 100%; 讓圖片預設顯示更大 */
+            width: 100%; 
             height: auto;
             border-radius: 15px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             border: 5px solid white;
+            cursor: zoom-in; /* 增加滑鼠提示，表示圖片可以點擊放大 */
         }
 
         /* 行程列表區塊 */
@@ -146,8 +151,10 @@
     </header>
 
     <div class="map-display-area">
-        <img src="https://meee.com.tw/B2B8cG4.png" alt="沖繩手繪行程地圖">
-        <p style="margin-top: 10px; font-size: 0.9em; color: #666;">👆 點擊下方按鈕可直接導航喔！👇</p>
+        <a href="https://meee.com.tw/B2B8cG4.png" data-lightbox="map-gallery" data-title="沖繩五日手繪行程全圖" title="點擊放大地圖">
+            <img src="https://meee.com.tw/B2B8cG4.png" alt="沖繩手繪行程地圖">
+        </a>
+        <p style="margin-top: 10px; font-size: 0.9em; color: #666;">👆 點擊圖片可放大，下方按鈕可直接導航喔！👇</p>
     </div>
 
     <div class="itinerary-list" id="itinerary-container">
@@ -158,9 +165,11 @@
     </footer>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
 <script>
     // 定義行程資料 (包含 Google Maps 搜尋連結)
-    // 這裡使用 Google Maps 的通用搜尋 URL，點擊後會自動開啟地圖 App 並搜尋該地點
     const itineraryData = [
         {
             day: "Day 1: 抵達那霸與拉麵之夜",
